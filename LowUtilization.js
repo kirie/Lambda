@@ -8,16 +8,17 @@
     5. Calls Lambda to send emails with SES
 **/
 
+const tableName = 'LowUtilTable';
+const tableKey = 'LowUtilId';
+const updateDays = 14;
+const region = 'us-west-2';
+
 const AWS = require('aws-sdk');
 const AWS2 = require('aws-sdk');
 
-AWS2.config.update({
-  region: 'us-west-2'
+AWS2.config.update({ 
+  region
 });
-
-const tableName = 'TRUSTED_ADVISOR';
-const tableKey = 'TRUSTED_ID';
-const updateDays = 14;
 
 const support = new AWS.Support({region: 'us-east-1'});
 const dynaClient = new AWS2.DynamoDB.DocumentClient();
