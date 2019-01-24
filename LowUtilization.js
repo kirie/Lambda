@@ -47,3 +47,41 @@ exports.handler = async (event, context, callback) => {
     callback(err.message)
   }
 };
+
+
+// remove any instance in dynamo that is now in active use.
+async function removeActive(obj) {
+  await Promise.all(Object.entries(obj).map(async ([key, value]) => {
+    const delParams = {
+      TableName: tableName,
+      Key: {
+        [tableKey] : key
+      }
+    }
+    await dynaClient.delete(delParams).promise();
+  }))
+};
+
+
+// update items in dynamo with the newly updated instances
+async function replaceItems (obj) {
+  await Promise.all(Object.entries(obj).map(async ([key, value]) => {
+    const updated = {
+      TableName: tableName,
+      Item: {
+        ...value,
+        [tableKey]: key,
+      }
+    }
+    await dynaClient.put(updated).promise();
+    })
+  )
+};
+
+// Convert array to object with a selected Key.  Like Lodash _.mapKeys
+function arrayToObject(arr, key) {
+  return arr.reduce((acc, cv) => {
+    acc[cv[`${key}`]] = cv;
+    return acc;
+  }, {});
+}
