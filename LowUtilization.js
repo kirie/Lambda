@@ -78,6 +78,29 @@ async function replaceItems (obj) {
   )
 };
 
+
+// Get existing instances from DynamoDB
+async function dynaDB() {
+  const scanParams = {
+    "TableName": tableName
+  };
+
+  const dynamoData = await dynaClient.scan(scanParams).promise();
+  return dynamoData;
+}
+
+// invoke lambda
+async function callPart2(newDB) {
+  const lambdaParams = {
+    FunctionName: "LowUtilizationEC2_SES",
+    InvocationType: "RequestResponse",
+    LogType: "Tail",
+    Payload: JSON.stringify(newDB)
+  };
+  let callLambda = await lambda.invoke(lambdaParams).promise();
+}
+
+
 // Convert array to object with a selected Key.  Like Lodash _.mapKeys
 function arrayToObject(arr, key) {
   return arr.reduce((acc, cv) => {
