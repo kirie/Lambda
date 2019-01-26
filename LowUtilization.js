@@ -166,6 +166,10 @@ function filterUpdateActive(arrDB, objTA) {
   return {lowUtilObj, remove: arrayToObject(remove, tableKey)};
 }
 
+// Input for CPU is 1 decimal place, but we save to 2 decimal places and return as number.
+function average(float1, float2) {
+  return parseFloat(((float1 + float2)/2).toFixed(2), 10);
+}
 
 
 // Convert array to object with a selected Key.  Like Lodash _.mapKeys
