@@ -12,7 +12,8 @@ const tableName = 'LowUtilTable';
 const tableKey = 'LowUtilId';
 const updateDays = 14;
 const region = 'us-west-2';
-
+const emailLambda = 'LowUtilization2';
+      
 const AWS = require('aws-sdk');
 const AWS2 = require('aws-sdk');
 
@@ -79,6 +80,35 @@ async function replaceItems (obj) {
 };
 
 
+// Get a list of low utilization EC2's from Trusted Advisor, structure into an object and return
+async function getTrustedInstances() {
+  let data = {};
+
+  const supportParams = {
+    checkId: 'Qch7DwouX1',
+    language: 'en'
+  };
+
+  const instanceSupport = await support.describeTrustedAdvisorCheckResult(supportParams).promise();
+  instanceSupport.result.flaggedResources.forEach((v) => {
+    let day = parseInt(v.metadata.splice(-1, 1)[0].split(' ')[0]);
+    data[v.metadata[1]] = {
+      isSuppressed: v.isSuppressed,
+      resourceId: v.resourceId,
+      region: v.metadata[0],
+      name: v.metadata[2],
+      instance: v.metadata[1],
+      size: v.metadata[3],
+      cost: v.metadata[4],
+      cpu: parseFloat(v.metadata[19].replace('%', ''), 10),
+      networkio: parseFloat(v.metadata[20].replace('MB', ''), 10),
+      days: day
+    };
+  })
+  return data;
+}
+
+
 // Get existing instances from DynamoDB
 async function dynaDB() {
   const scanParams = {
@@ -92,7 +122,7 @@ async function dynaDB() {
 // invoke lambda
 async function callPart2(newDB) {
   const lambdaParams = {
-    FunctionName: "LowUtilizationEC2_SES",
+    FunctionName: EmailLambda,
     InvocationType: "RequestResponse",
     LogType: "Tail",
     Payload: JSON.stringify(newDB)
