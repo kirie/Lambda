@@ -131,6 +131,43 @@ async function callPart2(newDB) {
 }
 
 
+// Remove all instances that are now active(we are left with valid lowUtil instances that we must keep in the DB)
+function filterUpdateActive(arrDB, objTA) {
+  const remove = [];
+
+  // Filter out and save any instance found in Dynamo that isnt in Trusted Advisor.  
+  const lowUtilEC2 = arrDB.filter(v => {
+    if(!(v[tableKey] in objTA)){
+      remove.push(v)
+      return false;
+    }
+    return v[tableKey] in objTA
+  });
+
+  const lowUtilObj = arrayToObject(lowUtilEC2, tableKey);
+
+  // add # of days, average out cpu/io, and update any naming, etc to the active instances 
+  Object.entries(lowUtilObj).map(([key, value]) => {
+    lowUtilObj[key].cpu = average(value.cpu, objTA[key].cpu);
+    lowUtilObj[key].networkio = average(value.networkio, objTA[key].networkio);
+    lowUtilObj[key].days = value.days + updateDays;
+    lowUtilObj[key].name = value.name;
+    lowUtilObj[key].size = value.size;
+  });
+
+  // add any new TA instances to the main EC2 Object
+  Object.entries(objTA).forEach(([key, value]) => {
+    if(!(key in lowUtilObj)) {
+      lowUtilObj[key] = value;
+    }
+  });
+
+  // return back two objects.  One with low Utilization and the other an Object of instances to remove from Dynamo
+  return {lowUtilObj, remove: arrayToObject(remove, tableKey)};
+}
+
+
+
 // Convert array to object with a selected Key.  Like Lodash _.mapKeys
 function arrayToObject(arr, key) {
   return arr.reduce((acc, cv) => {
