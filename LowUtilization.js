@@ -122,7 +122,7 @@ async function dynaDB() {
 // invoke lambda
 async function callPart2(newDB) {
   const lambdaParams = {
-    FunctionName: EmailLambda,
+    FunctionName: emailLambda,
     InvocationType: "RequestResponse",
     LogType: "Tail",
     Payload: JSON.stringify(newDB)
