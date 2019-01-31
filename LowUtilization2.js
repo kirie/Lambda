@@ -18,3 +18,18 @@ const AWS = require('aws-sdk');
 AWS.config.update({
   region: awsRegion
 })
+
+exports.handler = async (event, context, callback) => {
+  // get all dynamoDB instances back
+  let dynaInstances = await dynaDB();
+
+  // separate by region and then 
+  let regionInstances = parseDaysRegion(dynaInstances.Items);
+
+  // iterate through all regions listed in dynamo
+  let instanceTags = await Promise.all(Object.entries(regionInstances)
+    .map(async ([key, value]) => {
+      return await acquireTags(value, key);
+    })
+  )
+}
