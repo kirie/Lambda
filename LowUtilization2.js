@@ -32,4 +32,42 @@ exports.handler = async (event, context, callback) => {
       return await acquireTags(value, key);
     })
   )
+
+  // merge the region tags into one object
+  instanceTags = instanceTags.reduce((acc, cv) => {
+    for (let key in cv) {
+      acc[key] = cv[key]
+    }
+    return acc;
+  }, {})
+
+  // Iterate over instances over 90 days and attach their tags from instanceTags
+  let email90 = dynaInstances.Items
+    .filter(v => v.days >= 90 && v.days < 120)
+    .map(v => {
+      v['tags'] = instanceTags[v.instance]
+      return v
+    });
+
+  // Iterate over instances over 120 days and attach their tags from instanceTags
+  let stop120 = dynaInstances.Items
+    .filter(v => v.days >= 120 && v.days < 150)
+    .map(v => {
+      v['tags'] = instanceTags[v.instance]
+      return v
+    });
+
+  // Iterate over instances over 150 days and attach their tags from instanceTags
+  let terminate150 = dynaInstances.Items
+    .filter(v => v.days >= 150)
+    .map(v => {
+      v['tags'] = instanceTags[v.instance]
+      return v
+    });
+
+  // send to SES with template message
+  if (email90.length) await sesSend(email90, 1);
+  if (stop120.length) await sesSend(stop120, 2);
+  if (terminate150.length) await sesSend(terminate150, 3);
 }
+
