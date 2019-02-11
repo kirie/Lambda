@@ -71,3 +71,42 @@ exports.handler = async (event, context, callback) => {
   if (terminate150.length) await sesSend(terminate150, 3);
 }
 
+// send emails with instance types. 
+// use templates later
+async function sesSend(arr, ec2type) {
+  const instanceCount = arr.length;
+  let templateType = ''
+
+  const SES = new AWS.SES({
+    apiVersion: '2010-12-01'
+  });
+
+  switch (ec2type) {
+    case 1:
+      templateType = 'LowUtilizationEC2_90'
+      break;
+    case 2:
+      templateType = 'LowUtilizationEC2_120'
+      break;
+    case 3:
+      templateType = 'LowUtilizationEC2_150'
+      break;
+    default:
+      templateType = 'LowUtilizationEC2_90'
+  }
+
+  const emailTemplate = {
+    "Source": emailSource,
+    "Template": templateType,
+    "Destination": {
+      "ToAddresses": [...emailTo]
+    },
+    "TemplateData": stringEscape({
+      data: arr,
+      instanceCount
+    })
+  }
+
+  let sendIt = await SES.sendTemplatedEmail(emailTemplate).promise();
+  console.log('Sending: ', sendIt)
+};
