@@ -110,3 +110,31 @@ async function sesSend(arr, ec2type) {
   let sendIt = await SES.sendTemplatedEmail(emailTemplate).promise();
   console.log('Sending: ', sendIt)
 };
+
+// Escape and remove double escapes
+function stringEscape(dat) {
+  return JSON.stringify(dat).replace(/\\/g, '\\');
+}
+
+
+// take in the array of instances in each region(localRegion) and call EC2 to get the tags back
+// then sort them by the instanceId into an Object
+async function acquireTags(arr, localRegion) {
+  const EC2instances = arr.map(v => v.instance);
+  const EC2 = new AWS.EC2({ apiVersion: '2016-11-15', region: localRegion });
+
+  let ec2Params = {
+    Filters: [
+      {
+        Name: "resource-id",
+        Values: [
+          ...EC2instances
+        ]
+      }
+    ]
+  };
+
+  let getAWSTags = await EC2.describeTags(ec2Params).promise()
+  let instanceTags = arrayToObject2(getAWSTags.Tags, 'ResourceId')
+  return instanceTags;
+}
