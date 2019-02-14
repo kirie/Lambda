@@ -138,3 +138,18 @@ async function acquireTags(arr, localRegion) {
   let instanceTags = arrayToObject2(getAWSTags.Tags, 'ResourceId')
   return instanceTags;
 }
+
+// Filter instances within the days and put them into an object by region key
+function parseDaysRegion(arr) {
+  const regionInstances = {};
+
+  const over90 = arr.filter(v => v.days >= 90);
+
+  over90.forEach((v) => {
+    let keyAZ = v.region
+    let region = keyAZ.replace(/[.abcd]$/, "")
+    regionInstances[region] = regionInstances[region] ? [...regionInstances[region], v] : [v]
+  })
+
+  return regionInstances
+}
