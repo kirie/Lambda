@@ -153,3 +153,13 @@ function parseDaysRegion(arr) {
 
   return regionInstances
 }
+
+// Get our data from dynamoDB
+async function dynaDB() {
+  const dynaClient = new AWS.DynamoDB.DocumentClient();
+  const scanParams = {
+    "TableName": tableName
+  };
+
+  return await dynaClient.scan(scanParams).promise();
+}
