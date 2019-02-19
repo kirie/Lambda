@@ -163,3 +163,12 @@ async function dynaDB() {
 
   return await dynaClient.scan(scanParams).promise();
 }
+
+
+// Convert array to object with a selected key, but value will be an array of objects
+function arrayToObject2(arr, key) {
+  return arr.reduce((acc, cv) => {
+    acc[cv[`${key}`]] = acc[cv[`${key}`]] ? [...acc[cv[`${key}`]], cv] : [cv]
+    return acc
+  }, {})
+}
