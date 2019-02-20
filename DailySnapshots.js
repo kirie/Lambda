@@ -22,3 +22,23 @@ exports.handler = (event, context) => {
     }
   });
 };
+
+
+function createSnapshot(instance) {
+  const volumes = getVolumes(instance.BlockDeviceMappings);
+  const retention = getTag(instance.Tags, 'Retention');
+  volumes.forEach(v => {
+    const volparams = {
+      volumeId: v,
+      Description: getTag(instance.Tags, 'Department')
+    };
+    ec2.createSnapshot(volparams, (err, data) => {
+      if (err) console.log(err, err.stack)
+      else {
+        const date = new Date();
+        date.setDate(date.getDate() + parseInt(retention));
+        tagSnapshot(data.SnapshotId, formatDate(date));
+      }
+    });
+  });
+}
