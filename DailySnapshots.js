@@ -42,3 +42,20 @@ function createSnapshot(instance) {
     });
   });
 }
+
+function getVolumes(volumeBlock) {
+  const volumes = [];
+  volumeBlock.forEach(v => {
+    volumes.push(v.Ebs.VolumeId);
+  });
+  return volumes;
+}
+
+function getTag(tags, key) {
+  for (let x of tags) {
+    if (x.Key == key) {
+      return x.Value;
+    }
+  }
+  return false;
+}
