@@ -59,3 +59,20 @@ function getTag(tags, key) {
   }
   return false;
 }
+
+function tagSnapshot(snapshotId, deleteOn) {
+  const params = {
+    Resources: [snapshotId],
+      Tags: [{
+        Key: 'DeleteOn',
+        Value: deleteOn
+      }]
+  };
+
+  ec2.createTags(params, (err, data) => {
+    if (err) console.log(err, err.stack);
+    else {
+      console.log('Created');
+    }
+  });
+}
