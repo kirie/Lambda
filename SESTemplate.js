@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const TemplateName = "myTemplate";
-const Subjectpart = "My Subject Title";
+const SubjectPart = "My Subject Title";
 
 AWS.config.update({
   region: 'us-west-2'
