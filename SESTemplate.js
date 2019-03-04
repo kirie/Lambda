@@ -53,3 +53,19 @@ async function sendTemplate(objdata) {
   console.log('Sending template: ', sending);
 }
 
+function stringEscape(dat) {
+  return JSON.stringify(dat).replace(/\\/g, '\\');
+}
+
+
+async function deleteTemplate(name) {
+  const SES = new AWS.SES({
+    apiVersion: '2010-12-01'
+  })
+
+  const delParams = {
+    TemplateName: name
+  }
+  const del = await SES.deleteTemplate(delParams).promise();
+  console.log('Deleting: ', del)
+}
