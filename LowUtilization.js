@@ -85,7 +85,7 @@ async function getTrustedInstances() {
   let data = {};
 
   const supportParams = {
-    checkId: 'Qch7DwouX1',
+    checkId: 'Qch7DwouX1', // Qch7DwouX1 is the Check ID for TA. https://aws.amazon.com/premiumsupport/ta-iam/
     language: 'en'
   };
 
