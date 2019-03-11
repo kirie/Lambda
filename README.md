@@ -7,3 +7,5 @@
  - AWS DynamoDB table setup
  - AWS SES with verified email
  - EC2's with the {Owner:email} tag.
+
+**Daily Snapshots** - Takes Daily Snapshots of any EC2 with the {Backup: True} tag. It also adds a {DeleteOn: date} tag to snapshots for daily deletion script.  This script is obsolete with AWS EC2 Lifecycle Management.
