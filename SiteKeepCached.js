@@ -1,46 +1,19 @@
-const url = require('url');
+const nodeFetch = require('node-fetch');
 
-let sites = ['https://www.google.com', 'http://www.google.com'];
+let sites = ['https://www.httpstest.com', 'http://www.httptest.com'];
 
 exports.handler = async (event, context, callback) => {
   try {
-    const promises = sites.map(getSite); \\ hmm....
-    await Promise.all(promises);
+    const promises = sites.map(myFetch);
+    let status = await Promise.all(promises);
+    console.log('Status: ', status.every(v => v === 200))
   }
   catch (err) {
     callback(err.message)
   }
-};
+}
 
-async function getSite(siteUrl) {
-  let url = url.parse(siteUrl);
-  let proto = require(urlObj.protocol.slice(0, urlObj.protocol.length - 1));
-  
-  let req = proto.request(urlObj, (res) => {
-    let body = '';
-    console.log(res.statusCode);
-    res.setEncoding('utf8')
-    res.on('data', (chunk) => {
-      body+=chunk.toString();
-    })
-    res.on('end', () => {
-      console.log(body);
-      callback();
-    })
-  })
-  
-  res.on('end', function() {
-    //console.log(body);
-    callback();
-  });  
-  
-  res.on('end', function() {
-    //console.log(body);
-    callback();
-  });
-  
-  return new Promise((resolve, reject) => {
-    \\ if 200 or 300 code resolve
-    \\ reject
-  }
+async function myFetch(url) {
+  return nodeFetch(url).then(x => x.status)
+  //return nodeFetch(url, {redirect: 'error'}  if dont want redirects
 }
