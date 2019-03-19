@@ -5,7 +5,7 @@ let sites = ['https://www.google.com', 'http://www.gogle.com'];
 exports.handler = async (event, context, callback) => {
   try {
     const promises = sites.map(myFetch);
-    let status = await Promise.all(promises);
+    const status = await Promise.all(promises);
     console.log('Status: ', status.every(v => v === 200));
   }
   catch (err) {
