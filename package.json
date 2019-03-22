@@ -2,7 +2,7 @@
   "name": "lambda",
   "version": "1.0.0",
   "description": "AWS Lambda scripts",
-  "main": "LowUtilization.js",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
