@@ -15,5 +15,8 @@ exports.handler = async (event, context, callback) => {
 
 async function myFetch(url) {
   return nodeFetch(url).then(x => x.status)
-  //return nodeFetch(url, {redirect: 'error'}).then(x => x.status)  no redirects
+  
+  // No redirects
+  // return nodeFetch(url, {redirect: 'error'}).then(x => x.status)
+
 }
