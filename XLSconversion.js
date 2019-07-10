@@ -44,6 +44,8 @@ async function excel () {
       processData(key, value);
     });
   }
+ 
+  //return ...
 }
 
 
@@ -52,7 +54,9 @@ function processData(key, val) {
   const stream = fs.createWriteStream(`${startDate}Wells`);
 
   const begin = HEADERstr + startDate;
-  stream.write(`${begin}\r\n`); // Add windows CRLF
+ 
+ // Add windows CRLF
+  stream.write(`${begin}\r\n`); 
 
   const shortDate = startDate.slice(2);
 
@@ -66,4 +70,6 @@ function processData(key, val) {
   });
 
   stream.end();
+ 
+  //return  
 }
