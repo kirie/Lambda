@@ -73,3 +73,28 @@ function processData(key, val) {
  
   //return  
 }
+
+//async function change
+function sheet2arr(sheet) {
+  const result = [];
+  let row;
+  let rowNum;
+  let colNum;
+  const end = (sheet['!ref']).split(':')[1];
+  const myRef = 'A10:' + end;
+  const range = XLSX.utils.decode_range(myRef);
+
+  for (rowNum = range.s.r; rowNum <= range.e.r; rowNum++) {
+    row = [];
+    for (colNum = range.s.c; colNum <= range.e.c; colNum++) {
+      const nextCell = sheet[XLSX.utils.encode_cell({ r: rowNum, c: colNum })];
+      if (typeof nextCell !== 'undefined') {
+        row.push(nextCell.w);
+      }
+    }
+    if (row.length > 0) {
+      result.push(row);
+    }
+  }
+  return result;
+}
