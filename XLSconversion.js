@@ -98,3 +98,15 @@ function sheet2arr(sheet) {
   }
   return result;
 }
+
+const removeCommas = str => Number(str.replace(/,/g, ''));
+
+const removeDecimal = num => (num * 100).toFixed(0);
+
+const padEleven = (amt) => {
+  let returnVal;
+  if (amt <= 99999999999) {
+    returnVal = ('00000000000' + amt).slice(-11);
+  }
+  return returnVal;
+};
