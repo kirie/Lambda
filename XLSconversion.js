@@ -99,6 +99,26 @@ function sheet2arr(sheet) {
   return result;
 }
 
+
+function verifyTotal(sheet) {
+  const items = sheet.slice(0, sheet.length - 1);
+  console.log('Total Items: ', items.length);
+
+  const total = removeCommas(sheet[sheet.length - 1][0]) * 100;
+  console.log('Listed Total: ', total);
+
+  const itemTotal = items.reduce((pv, cv) => {
+    const amount = Number(cv[3].replace(/,/g, '')) * 100;
+    return pv + amount;
+  }, 0)
+
+  console.log('Tabulated Total: ', itemTotal);
+  console.log('Same total: ', itemTotal == total);
+
+  return itemTotal == total;
+}
+
+
 const removeCommas = str => Number(str.replace(/,/g, ''));
 
 const removeDecimal = num => (num * 100).toFixed(0);
